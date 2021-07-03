@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //            + "(COALESCE(:categories) IS NULL OR cats IN :categories) AND "
 //            + "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%'))) ")
 //    Page<Product> find( List<Category> categories, String name, Pageable pageable );
+
+    User findByEmail( String email );
 }

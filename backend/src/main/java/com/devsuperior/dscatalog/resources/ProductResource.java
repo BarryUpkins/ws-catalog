@@ -24,9 +24,6 @@ public class ProductResource {
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> findAll( Pageable Pageable ) {
         Page<ProductDTO> list = service.findAllPaged( Pageable );
-//        list.add(new Product(1L, "Books"));
-//        list.add(new Product(1L, "Electronics"));
-
         return ResponseEntity.ok().body(list);
     }
 
