@@ -37,7 +37,7 @@ public class UserResource {
     // 200 requisição sucesso
     // 201 inserção sucesso, convem informar no header o endereço
     // 204 success e corpo da resposta vazio
-    @PostMapping    //( value = "/add")
+    @PostMapping( value = "/add")
     public ResponseEntity<UserDTO> insert( @Valid @RequestBody UserInsertDTO dto ) { // @RequestBody o endpoint reconheça objeto e case com dto
         UserDTO newDto  = service.insert( dto );
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path( "/{id}" )

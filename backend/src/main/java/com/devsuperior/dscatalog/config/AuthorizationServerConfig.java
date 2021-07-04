@@ -1,6 +1,7 @@
 package com.devsuperior.dscatalog.config;
 
 //import com.devsuperior.dscatalog.components.JwtTokenEnhancer;
+import com.devsuperior.dscatalog.components.JwtTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +22,68 @@ import java.util.Arrays;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-//    @Value("${security.oauth2.client.client-id}")
-//    private String clientId;
+//    @Autowired
+//    private BCryptPasswordEncoder passwordEncoder;
 //
-//    @Value("${security.oauth2.client.client-secret}")
-//    private String clientSecret;
+//    @Autowired
+//    private JwtAccessTokenConverter accessTokenConverter;
 //
-//    @Value("${jwt.duration}")
-//    private Integer jwtDuration;
+//    @Autowired
+//    private JwtTokenStore tokenStore;
+//
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
+//
+////    @Autowired
+////    private JwtTokenEnhancer tokenEnhancer;
+//
+//    @Override
+//    public void configure( AuthorizationServerSecurityConfigurer security ) throws Exception {
+//        security.tokenKeyAccess( "permitAll()" ).checkTokenAccess( "isAuthenticated()" );
+//    }
+//
+//    @Override
+//    public void configure( ClientDetailsServiceConfigurer clients ) throws Exception {
+//        clients.inMemory()
+//                .withClient( "dscatalog" )
+//                .secret( passwordEncoder.encode( "dscatalog123" ) )
+//                .scopes( "read", "write")
+//                .authorizedGrantTypes( "password" )
+//                .accessTokenValiditySeconds( 86400 );
+//    }
+//
+//    @Override
+//    public void configure( AuthorizationServerEndpointsConfigurer endpoints ) throws Exception {
+//
+////        TokenEnhancerChain chain = new TokenEnhancerChain();
+////        chain.setTokenEnhancers( Arrays.asList( accessTokenConverter, tokenEnhancer ) );
+//
+////        endpoints.authenticationManager( authenticationManager )
+////                .tokenStore( tokenStore )
+////                .accessTokenConverter( accessTokenConverter )
+////                .tokenEnhancer( chain );
+//
+//        endpoints.authenticationManager( authenticationManager )
+//                .tokenStore( tokenStore )
+//                .accessTokenConverter( accessTokenConverter );
+//    }
+
+
+
+
+
+
+    @Value("${security.oauth2.client.client-id}")
+    private String clientId;
+
+    @Value("${security.oauth2.client.client-secret}")
+    private String clientSecret;
+
+    @Value("${jwt.duration}")
+    private Integer jwtDuration;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder pwEncoder;
 
     @Autowired
     private JwtAccessTokenConverter accessTokenConverter;
@@ -42,8 +94,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private AuthenticationManager authenticationManager;
 
-//    @Autowired
-//    private JwtTokenEnhancer tokenEnhancer;
+    @Autowired
+    private JwtTokenEnhancer tokenEnhancer;
 
     @Override
     public void configure( AuthorizationServerSecurityConfigurer security ) throws Exception {
@@ -53,26 +105,27 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure( ClientDetailsServiceConfigurer clients ) throws Exception {
         clients.inMemory()
-                .withClient( "dscatalog" )
-                .secret( passwordEncoder.encode( "dscatalog123" ) )
+                .withClient( clientId )
+                .secret( pwEncoder.encode( clientSecret ) )
                 .scopes( "read", "write")
                 .authorizedGrantTypes( "password" )
-                .accessTokenValiditySeconds( 86400 );
+                .accessTokenValiditySeconds( jwtDuration );
     }
 
     @Override
     public void configure( AuthorizationServerEndpointsConfigurer endpoints ) throws Exception {
 
-//        TokenEnhancerChain chain = new TokenEnhancerChain();
-//        chain.setTokenEnhancers( Arrays.asList( accessTokenConverter, tokenEnhancer ) );
+        TokenEnhancerChain chain = new TokenEnhancerChain();
+        chain.setTokenEnhancers( Arrays.asList( accessTokenConverter, tokenEnhancer ) );
 
-//        endpoints.authenticationManager( authenticationManager )
-//                .tokenStore( tokenStore )
-//                .accessTokenConverter( accessTokenConverter )
-//                .tokenEnhancer( chain );
+        endpoints.authenticationManager( authenticationManager )
+                .tokenStore( tokenStore )
+                .accessTokenConverter( accessTokenConverter )
+                .tokenEnhancer( chain );
 
         endpoints.authenticationManager( authenticationManager )
             .tokenStore( tokenStore )
-            .accessTokenConverter( accessTokenConverter );
+            .accessTokenConverter( accessTokenConverter )
+            .tokenEnhancer( chain );
     }
 }
